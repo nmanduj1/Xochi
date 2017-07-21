@@ -1,9 +1,18 @@
+'use strict'
+
 const express = require('express');
-const app = express();
 const routes = require('./routes');
+const model = require('./models.js')
+const app = express();
 
 
 routes(app);
+
+let allModels = model();
+let mediumThingy = allModels.Medium;
+
+console.log(mediumThingy);
+
 // Setup CORS permissions
 
 app.use(function(req, res, next) {
@@ -14,6 +23,7 @@ app.use(function(req, res, next) {
 });
 
 
+//
 function listening(){
     console.log("shoulder for you to cry upon");
 }
