@@ -1,8 +1,9 @@
-'use strict'
+'use strict';
 
-const express = require('express');
+//const express = require('express');
+const mediaUpload = require('./mediaUploadSpecs.js');
 
-const app = express();
+//const app = express();
 
 
 let everything = function(app) {
@@ -21,6 +22,7 @@ let everything = function(app) {
 
     function add_medium(request, response) {
         console.log("add new image");
+        mediaUpload("jpeg");
     }
 
     function update_caption(request, response) {
