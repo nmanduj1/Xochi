@@ -4,6 +4,12 @@ const AWS = require('aws-sdk');
 const config = require('./awsConfig.js');
 const s3 = new AWS.S3({accessKeyId: config.aws_access_key_id, secretAccessKey: config.aws_secret_access_key});
 
+// I'm uploading images using putObject from AWS documentation found here : https://aws.amazon.com/sdk-for-node-js/
+//
+// I think you can also use the code below that (  .upload()  )- based on aws doc found here :
+// http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#upload-property
+// not sure what the difference is between them.  *scribbles in to-do list*
+
 let guts = function(ext){
 
     let randKey = Math.floor(Math.random() * (9999999 - 234567) + 234567) + "." + ext;
