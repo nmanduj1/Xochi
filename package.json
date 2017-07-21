@@ -1,0 +1,17 @@
+{
+  "name": "xochi",
+  "version": "1.0.0",
+  "description": "Photo Management Application",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "guzzimiliano",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "mysql2": "^1.3.6",
+    "sequelize": "^4.4.0"
+  }
+}
