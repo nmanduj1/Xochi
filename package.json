@@ -11,7 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.88.0",
+    "busboy": "^0.2.14",
     "express": "^4.15.3",
+    "express-busboy": "^6.0.1",
+    "multer": "^1.3.0",
     "mysql2": "^1.3.6",
     "sequelize": "^4.4.0"
   }

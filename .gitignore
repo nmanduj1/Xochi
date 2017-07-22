@@ -1,3 +1,5 @@
 /node_modules
 /.idea
-awsConfig.js
+config.js
+/uploads/
+notes.txt

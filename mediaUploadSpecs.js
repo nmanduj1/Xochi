@@ -1,7 +1,8 @@
 'use strict';
 
 const AWS = require('aws-sdk');
-const config = require('./awsConfig.js');
+const config = require('./config.js');
+// sending credentials below as parameters per http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html
 const s3 = new AWS.S3({accessKeyId: config.aws_access_key_id, secretAccessKey: config.aws_secret_access_key});
 
 // I'm uploading images using putObject from AWS documentation found here : https://aws.amazon.com/sdk-for-node-js/

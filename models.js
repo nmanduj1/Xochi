@@ -35,7 +35,7 @@ let seqModel = function() {
         caption: Sequelize.TEXT
     });
 
-    Medium.sync();
+    Medium.sync(); // asks DB to sync up.
 
     return { // return list of all models so add them here.  duh.
         Medium // creates key value pair of Medium:value

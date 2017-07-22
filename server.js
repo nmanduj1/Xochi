@@ -3,6 +3,7 @@
 const express = require('express');
 const routes = require('./routes');
 const model = require('./models.js');
+
 const app = express();
 
 
@@ -23,7 +24,9 @@ app.use(function(req, res, next) {
 });
 
 
-//
+
+
+
 function listening(){
     console.log("shoulder for you to cry upon");
 }
