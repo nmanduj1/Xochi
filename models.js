@@ -40,7 +40,6 @@ let seqModel = function() {
 
     return { // return list of all models so add them here.  duh.
         Medium // creates key value pair of Medium:value
-
     }
 
 };

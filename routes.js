@@ -1,7 +1,6 @@
 'use strict';
 
 const express = require('express');
-const app = express.Router();
 let fs = require('fs');
 const model = require('./models.js');
 const models = model();
@@ -48,7 +47,7 @@ let everything = function(app) {
             if (err){
             }
             console.log(request.file, "cgfhvjbknl");
-
+            console.log(request.body.caption, "TEXT HEREEEEE")
             // Playing with data received
             let s3_file_stream = fs.createReadStream(request.file.path);  // pulling out file path guts
             // next, need to figure out file extension.  Using regular expression to look for extention of original file.
@@ -59,13 +58,13 @@ let everything = function(app) {
             //console.log(filename, "FILEPATH STUFFS");
             //console.log(extentions_name[0], "EXTENTION NAME");
 
-            // now that we have both the EXTENSION AND THE FILE STREAM, we can sending these to aws.
+            // now that we have both the EXTENSION AND THE FILE STREAM, we can send these to aws.
             let db_storage_name = mediaUpload(extentions_name[0], s3_file_stream);
 
-            // oops, we still need to upload to the DB- in order to do what, we need to pull out a few more things from the request, the mimetype and the caption
+            // oops, we still need to upload to the DB- in order to do that, we need to pull out a few more things from the request, the mimetype and the caption
             let mimetype = (request.file.mimetype); // pulling out mimetype stuffs
-            
-            models.Medium.create({s3_filename: db_storage_name, mimetype: mimetype}); // downside, always creating. mod this with promise to check for duplicates
+            let medium_caption = request.body.caption;
+            models.Medium.create({s3_filename: db_storage_name, mimetype: mimetype, caption: medium_caption}); // downside, always creating. mod this with promise to check for duplicates
 
             //mediaUpload('jpg', request.file.path);
             //let filePathName = fs.open(request.file.path, 'r', send2AWS);

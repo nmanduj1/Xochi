@@ -6,13 +6,12 @@ const model = require('./models.js');
 
 const app = express();
 
-
 routes(app);
 
 let allModels = model();
 let mediumThingy = allModels.Medium;
 
-console.log(mediumThingy);
+//console.log(mediumThingy, "ALL MODELS MEDUIMMMMM");
 
 // Setup CORS permissions
 
@@ -24,11 +23,8 @@ app.use(function(req, res, next) {
 });
 
 
-
-
-
 function listening(){
-    console.log("shoulder for you to cry upon");
+    console.log("share your vanities.");
 }
 
 
