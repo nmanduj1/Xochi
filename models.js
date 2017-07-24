@@ -32,10 +32,11 @@ let seqModel = function() {
     const Medium = sequelize.define('medium', {
         // primaryKey- ID set automatically by Sequelize
         s3_filename: Sequelize.STRING,
+        mimetype: Sequelize.STRING,
         caption: Sequelize.TEXT
     });
 
-    Medium.sync(); // asks DB to sync up.
+    Medium.sync(); // asks DB to sync up.  // pass {force: true} as param if giving you problems syncing.
 
     return { // return list of all models so add them here.  duh.
         Medium // creates key value pair of Medium:value

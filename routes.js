@@ -3,7 +3,8 @@
 const express = require('express');
 const app = express.Router();
 let fs = require('fs');
-
+const model = require('./models.js');
+const models = model();
 
 const mediaUpload = require('./mediaUploadSpecs.js');
 const multer = require('multer');
@@ -48,8 +49,15 @@ let everything = function(app) {
             }
             console.log(request.file, "cgfhvjbknl");
 
-            let someStuff = fs.createReadStream(request.file.path);
-            mediaUpload('jpg', someStuff);
+            // reading file path
+            let s3_fileStream = fs.createReadStream(request.file.path);
+            let s3_filePath = request.file.path;
+            let mimetype = (request.file.mimetype);
+
+            // sending the file path to aws.
+            let DB_storage_name = mediaUpload('jpg', s3_fileStream);
+
+            models.Medium.create({s3_filename: DB_storage_name, mimetype: mimetype});
 
             //mediaUpload('jpg', request.file.path);
             //let filePathName = fs.open(request.file.path, 'r', send2AWS);
@@ -59,19 +67,18 @@ let everything = function(app) {
                 message: 'Image uploaded!'
             });
         });
-
-
-        //mediaUpload("jpeg");
-
         console.log("add new image");
 
     }
 
+    /*
     function send2AWS(err, fileDescriptor) {
         // file descriptor is pointer to file
         console.log(fileDescriptor, "FILE HERE");
         mediaUpload('jpg', fileDescriptor);
     }
+    */
+
 
     function update_caption(request, response) {
         console.log("update deets");

@@ -21,10 +21,11 @@ let guts = function(ext, fileDescriptor){
             console.log(err)
         }
         else {
-            console.log("Successfully uploaded data to my-goddamn-xochi-media using as this key:" + randKey);
+            console.log("Successfully uploaded data to my-goddamn-xochi-media using this key:" + randKey);
         }
     });
 
+    return randKey;
 
 
     /*
