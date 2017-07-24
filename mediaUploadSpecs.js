@@ -11,10 +11,11 @@ const s3 = new AWS.S3({accessKeyId: config.aws_access_key_id, secretAccessKey: c
 // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#upload-property
 // not sure what the difference is between them.  *scribbles in to-do list*
 
-let guts = function(ext){
-
+let guts = function(ext, fileDescriptor){
     let randKey = Math.floor(Math.random() * (9999999 - 234567) + 234567) + "." + ext;
-    let params = {Bucket: 'my-goddamn-xochi-media', Key: randKey, Body: 'Hello! <- not sure why the ello.'};
+
+
+    let params = {Bucket: 'my-goddamn-xochi-media', Key: randKey, Body: fileDescriptor};
     s3.putObject(params, function(err, data) {
         if (err) {
             console.log(err)
@@ -24,8 +25,10 @@ let guts = function(ext){
         }
     });
 
+
+
     /*
-    var params = {Bucket: 'bucket', Key: 'key', Body: stream};
+    var params = {Bucket: 'my-goddamn-xochi-media', Key: randKey, Body: fileDescriptor};
     var options = {partSize: 10 * 1024 * 1024, queueSize: 1};
     s3.upload(params, options, function(err, data) {
         console.log(err, data);

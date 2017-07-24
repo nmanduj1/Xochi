@@ -2,6 +2,7 @@
 
 const express = require('express');
 const app = express.Router();
+let fs = require('fs');
 
 
 const mediaUpload = require('./mediaUploadSpecs.js');
@@ -14,7 +15,7 @@ const multer = require('multer');
 let everything = function(app) {
 
 
-    var storage = multer.diskStorage({
+    let storage = multer.diskStorage({
         destination: function (req, file, cb) {
             cb(null, 'uploads/')
         },
@@ -23,7 +24,9 @@ let everything = function(app) {
         }
     });
 
-    var upload = multer({ storage: storage }).single('file');
+    let upload = multer({ storage: storage }).single('file');
+
+
 
 // setting up my Express Routes
 
@@ -44,6 +47,13 @@ let everything = function(app) {
             if (err){
             }
             console.log(request.file, "cgfhvjbknl");
+
+            let someStuff = fs.createReadStream(request.file.path);
+            mediaUpload('jpg', someStuff);
+
+            //mediaUpload('jpg', request.file.path);
+            //let filePathName = fs.open(request.file.path, 'r', send2AWS);
+
             response.json({
                 success: true,
                 message: 'Image uploaded!'
@@ -51,13 +61,16 @@ let everything = function(app) {
         });
 
 
-        console.log(request.file);
-        //next();
-        console.log(request.body);
         //mediaUpload("jpeg");
 
         console.log("add new image");
 
+    }
+
+    function send2AWS(err, fileDescriptor) {
+        // file descriptor is pointer to file
+        console.log(fileDescriptor, "FILE HERE");
+        mediaUpload('jpg', fileDescriptor);
     }
 
     function update_caption(request, response) {
