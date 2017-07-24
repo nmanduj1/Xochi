@@ -49,15 +49,23 @@ let everything = function(app) {
             }
             console.log(request.file, "cgfhvjbknl");
 
-            // reading file path
-            let s3_fileStream = fs.createReadStream(request.file.path);
-            let s3_filePath = request.file.path;
-            let mimetype = (request.file.mimetype);
+            // Playing with data received
+            let s3_file_stream = fs.createReadStream(request.file.path);  // pulling out file path guts
+            // next, need to figure out file extension.  Using regular expression to look for extention of original file.
+            let filename = request.file.originalname; // pulling name of file 2bUsed for extention specification
+            let regex_ext_search_query = new RegExp(/\.[a-zA-Z]{3,4}/); // dictating query to be searched for
+            let extentions_name = filename.match(regex_ext_search_query); // .match returns array with stuffs. first indicie holds match
 
-            // sending the file path to aws.
-            let DB_storage_name = mediaUpload('jpg', s3_fileStream);
+            //console.log(filename, "FILEPATH STUFFS");
+            //console.log(extentions_name[0], "EXTENTION NAME");
 
-            models.Medium.create({s3_filename: DB_storage_name, mimetype: mimetype});
+            // now that we have both the EXTENSION AND THE FILE STREAM, we can sending these to aws.
+            let db_storage_name = mediaUpload(extentions_name[0], s3_file_stream);
+
+            // oops, we still need to upload to the DB- in order to do what, we need to pull out a few more things from the request, the mimetype and the caption
+            let mimetype = (request.file.mimetype); // pulling out mimetype stuffs
+            
+            models.Medium.create({s3_filename: db_storage_name, mimetype: mimetype}); // downside, always creating. mod this with promise to check for duplicates
 
             //mediaUpload('jpg', request.file.path);
             //let filePathName = fs.open(request.file.path, 'r', send2AWS);

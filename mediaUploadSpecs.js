@@ -12,7 +12,7 @@ const s3 = new AWS.S3({accessKeyId: config.aws_access_key_id, secretAccessKey: c
 // not sure what the difference is between them.  *scribbles in to-do list*
 
 let guts = function(ext, fileDescriptor){
-    let randKey = Math.floor(Math.random() * (9999999 - 234567) + 234567) + "." + ext;
+    let randKey = Math.floor(Math.random() * (9999999 - 234567) + 234567) + ext;
 
 
     let params = {Bucket: 'my-goddamn-xochi-media', Key: randKey, Body: fileDescriptor};
