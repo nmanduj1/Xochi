@@ -91,11 +91,15 @@ let everything = function(app) {
 
             upload_promise.then(
                 function (internal_random_file_name/* this corresponds to the randKey that is being returned by the promise in my mediaUploadSpecs.js file */) {
-                    models.Medium.create({s3_filename: internal_random_file_name, mimetype: mimetype, caption: medium_caption}); // downside, always creating. mod this with promise to check for duplicate
-                    response.send({
-                        success: true,
-                        message: 'I just checked, they got it.'
-                    });
+                    models.Medium.create({s3_filename: internal_random_file_name, mimetype: mimetype, caption: medium_caption}).then(
+                        found_it => {
+                            response.send(
+                                found_it
+                            )
+                        }
+                    ); // downside, always creating. mod this with promise to check for duplicate
+
+
                 },
                 function (error) {
                     console.log(error);
