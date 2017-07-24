@@ -4,6 +4,7 @@ const express = require('express');
 let fs = require('fs');
 const model = require('./models.js');
 const models = model();
+const Sequelize = require('sequelize');
 
 const mediaUpload = require('./mediaUploadSpecs.js');
 const multer = require('multer');
@@ -31,6 +32,7 @@ let everything = function(app) {
 // setting up my Express Routes
 
     app.get('/media', show_all);
+    app.get('/media/random', show_random);
     app.post('/media', add_medium);
     app.put('/media/:id', update_caption);
     app.delete('/media/:id', delete_medium);
@@ -38,7 +40,30 @@ let everything = function(app) {
 // detailing my core route CALLBACK FUNCTIONS
 
     function show_all(request, response) {
-        console.log("show everything");
+        models.Medium.findAll().then(
+            all_media => {
+                response.send(all_media);
+                response.end();
+            },
+            err => {
+                response.statusCode = 400; // bad request
+            }
+        );
+    }
+
+
+    function show_random(request, response){
+        models.Medium.findOne({ order: [[Sequelize.fn('RAND')]] }).then(
+            lucky_one => {
+                response.send(lucky_one);
+                response.end();
+            },
+            err => {
+                response.statusCode = 400;
+                //console.log(err);
+                response.end();
+            }
+        );
     }
 
     function add_medium(request, response, next) {
@@ -67,7 +92,7 @@ let everything = function(app) {
             upload_promise.then(
                 function (internal_random_file_name/* this corresponds to the randKey that is being returned by the promise in my mediaUploadSpecs.js file */) {
                     models.Medium.create({s3_filename: internal_random_file_name, mimetype: mimetype, caption: medium_caption}); // downside, always creating. mod this with promise to check for duplicate
-                    response.json({
+                    response.send({
                         success: true,
                         message: 'I just checked, they got it.'
                     });
@@ -83,10 +108,10 @@ let everything = function(app) {
             //mediaUpload('jpg', request.file.path);
             //let filePathName = fs.open(request.file.path, 'r', send2AWS);
 
-            response.json({
-                success: true,
-                message: 'I did my part! fuck knows if file uploaded or not'
-            });
+            //response.json({
+            //    success: true,
+            //    message: 'I did my part! fuck knows if file uploaded or not'
+            //});
         });
     }
 
