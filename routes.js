@@ -14,7 +14,7 @@ const multer = require('multer');
 
 let everything = function(app) {
 
-
+    // doc from https://github.com/an0nh4x0r/youtube_fileupload/blob/master/routes/profile.js
     let storage = multer.diskStorage({
         destination: function (req, file, cb) {
             cb(null, 'uploads/')
@@ -42,21 +42,20 @@ let everything = function(app) {
     }
 
     function add_medium(request, response, next) {
-
         upload(request, response, function(err){
-            if (err){
+            if (err) {
+                response.json({
+                    success: false,
+                    message: 'Image not uploaded!'
+                });
             }
-            console.log(request.file, "cgfhvjbknl");
-            console.log(request.body.caption, "TEXT HEREEEEE")
+
             // Playing with data received
             let s3_file_stream = fs.createReadStream(request.file.path);  // pulling out file path guts
             // next, need to figure out file extension.  Using regular expression to look for extention of original file.
             let filename = request.file.originalname; // pulling name of file 2bUsed for extention specification
             let regex_ext_search_query = new RegExp(/\.[a-zA-Z]{3,4}/); // dictating query to be searched for
             let extentions_name = filename.match(regex_ext_search_query); // .match returns array with stuffs. first indicie holds match
-
-            //console.log(filename, "FILEPATH STUFFS");
-            //console.log(extentions_name[0], "EXTENTION NAME");
 
             // now that we have both the EXTENSION AND THE FILE STREAM, we can send these to aws.
             let db_storage_name = mediaUpload(extentions_name[0], s3_file_stream);
@@ -74,8 +73,6 @@ let everything = function(app) {
                 message: 'Image uploaded!'
             });
         });
-        console.log("add new image");
-
     }
 
     /*

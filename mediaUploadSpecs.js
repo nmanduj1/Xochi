@@ -14,7 +14,7 @@ const s3 = new AWS.S3({accessKeyId: config.aws_access_key_id, secretAccessKey: c
 let guts = function(ext, fileDescriptor){
     let randKey = Math.floor(Math.random() * (9999999 - 234567) + 234567) + ext;
 
-
+    // am thinking of setting this into a promise.  mmm, lemme commit first, just in case
     let params = {Bucket: 'my-goddamn-xochi-media', Key: randKey, Body: fileDescriptor};
     s3.putObject(params, function(err, data) {
         if (err) {
