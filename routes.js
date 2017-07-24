@@ -58,19 +58,34 @@ let everything = function(app) {
             let extentions_name = filename.match(regex_ext_search_query); // .match returns array with stuffs. first indicie holds match
 
             // now that we have both the EXTENSION AND THE FILE STREAM, we can send these to aws.
-            let db_storage_name = mediaUpload(extentions_name[0], s3_file_stream);
+            let upload_promise = mediaUpload(extentions_name[0], s3_file_stream);
 
             // oops, we still need to upload to the DB- in order to do that, we need to pull out a few more things from the request, the mimetype and the caption
             let mimetype = (request.file.mimetype); // pulling out mimetype stuffs
             let medium_caption = request.body.caption;
-            models.Medium.create({s3_filename: db_storage_name, mimetype: mimetype, caption: medium_caption}); // downside, always creating. mod this with promise to check for duplicates
+
+            upload_promise.then(
+                function (internal_random_file_name/* this corresponds to the randKey that is being returned by the promise in my mediaUploadSpecs.js file */) {
+                    models.Medium.create({s3_filename: internal_random_file_name, mimetype: mimetype, caption: medium_caption}); // downside, always creating. mod this with promise to check for duplicate
+                    response.json({
+                        success: true,
+                        message: 'I just checked, they got it.'
+                    });
+                },
+                function (error) {
+                    console.log(error);
+                }
+
+            );
+
+
 
             //mediaUpload('jpg', request.file.path);
             //let filePathName = fs.open(request.file.path, 'r', send2AWS);
 
             response.json({
                 success: true,
-                message: 'Image uploaded!'
+                message: 'I did my part! fuck knows if file uploaded or not'
             });
         });
     }
@@ -94,3 +109,24 @@ let everything = function(app) {
 }
 
 module.exports = everything;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
