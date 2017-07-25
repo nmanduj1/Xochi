@@ -88,13 +88,12 @@ let everything = function(app) {
             // oops, we still need to upload to the DB- in order to do that, we need to pull out a few more things from the request, the mimetype and the caption
             let mimetype = (request.file.mimetype); // pulling out mimetype stuffs
             let medium_caption = request.body.caption;
-
             upload_promise.then(
                 function (internal_random_file_name/* this corresponds to the randKey that is being returned by the promise in my mediaUploadSpecs.js file */) {
                     models.Medium.create({s3_filename: internal_random_file_name, mimetype: mimetype, caption: medium_caption}).then(
-                        found_it => {
+                        made_it => {
                             response.send(
-                                found_it
+                                made_it
                             )
                         }
                     ); // downside, always creating. mod this with promise to check for duplicate
@@ -129,8 +128,56 @@ let everything = function(app) {
 
 
     function update_caption(request, response) {
-        console.log("update deets");
+        // grab id of medium that is being updated:
+        let id_im_updating = request.params.id;
+        console.log(id_im_updating, "update deets for this thingy");
+
+        // this mess grabs the body of the request.  #fml seriously.
+        request.on('data', (chunk) => {
+            let decoded_buffer = chunk.toString();
+            console.log(decoded_buffer, "DATA");
+            //let regex_key_search = new RegExp(/(?:(?!=).)*/);
+            let regex_value_search = new RegExp(/=\w+/);
+
+            //let key_to_update = decoded_buffer.match(regex_key_search);
+            let value_to_update = decoded_buffer.match(regex_value_search);
+
+            //let final_key = key_to_update[0];
+            let almost_final_value = value_to_update[0];
+
+            console.log(almost_final_value, "huirhgijknbglwkjrnbgije");
+
+            let splitstr = almost_final_value.split('=');
+            let final_value = splitstr[1];
+
+            let thing_2_update =
+                models.Medium.update({
+                        caption : final_value
+                    }, {
+                        where: {
+                            id: id_im_updating
+                        }
+                    }
+                );
+
+            thing_2_update.then(
+                updated_medium => {
+                    response.send(updated_medium);
+                    console.log(updated_medium, "not sure whats going on here")
+                    response.end();
+                },
+                err => {
+                    response.statusCode = 400;
+                }
+            );
+
+        });
     }
+
+
+        // need regEx to get the key and the value.  because the thing doesn't come in as a json object.
+
+
 
     function delete_medium(request, response) {
         console.log("delete image");
