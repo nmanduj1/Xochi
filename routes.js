@@ -6,16 +6,19 @@ const model = require('./models.js');
 const models = model();
 const Sequelize = require('sequelize');
 const bodyParser = require('body-parser');
-const mediaUpload = require('./mediaUploadSpecs.js');
+const AWS_guts = require('./mediaUploadSpecs.js');
 const multer = require('multer');
-
 
 
 
 let everything = function(app) {
 
-    app.use(bodyParser.urlencoded({ extended: false }))
+// guts to parse requests.  Body parser specifically tackles PUT requests (which #meh.  but, taking into account that
+// incoming PUT requests should only be incoming single part text, so body parser is enough.
+// Multer handles multipart data form submission - aka both files and captions.
+// Both of these are set up below.
 
+    app.use(bodyParser.urlencoded({ extended: false }));
 
     // doc from https://github.com/an0nh4x0r/youtube_fileupload/blob/master/routes/profile.js
     let storage = multer.diskStorage({
@@ -58,7 +61,10 @@ let everything = function(app) {
     function show_random(request, response){
         models.Medium.findOne({ order: [[Sequelize.fn('RAND')]] }).then(
             lucky_one => {
-                response.send(lucky_one);
+                let only_signed_url = AWS_guts.signed_url(lucky_one); // generates signed url
+                let plain_object_model = lucky_one.get({plain: true}); // removes sequelizer crap to give you actual values in object
+                plain_object_model.signed_url = only_signed_url; // setting up key/value pair to store in main object: key = ('plain_object_model') value = stuff returned by only_signed_url
+                response.send(plain_object_model); // sends back new object with updated key-value pairs.
                 response.end();
             },
             err => {
@@ -86,7 +92,7 @@ let everything = function(app) {
             let extentions_name = filename.match(regex_ext_search_query); // .match returns array with stuffs. first indicie holds match
 
             // now that we have both the EXTENSION AND THE FILE STREAM, we can send these to aws.
-            let upload_promise = mediaUpload(extentions_name[0], s3_file_stream);
+            let upload_promise = AWS_guts.upload_media(extentions_name[0], s3_file_stream);
 
             // oops, we still need to upload to the DB- in order to do that, we need to pull out a few more things from the request, the mimetype and the caption
             let mimetype = (request.file.mimetype); // pulling out mimetype stuffs
@@ -152,6 +158,7 @@ let everything = function(app) {
             },
             err => {
                 response.statusCode = 400;
+                response.end();
             }
         );
     }
@@ -167,7 +174,6 @@ let everything = function(app) {
               }
             });
 
-
         annihlate.then(
             destroyed_medium => {
                 response.statusCode = 204;
@@ -180,7 +186,7 @@ let everything = function(app) {
         )
 
     }
-}
+};
 
 module.exports = everything;
 

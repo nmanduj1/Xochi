@@ -57,8 +57,19 @@ let guts = function(ext, fileDescriptor){
         console.log(err, data);
     });
     */
+
+
 };
 
+let moreGuts = function(objectParams) {
+    let params = {Bucket:'my-goddamn-xochi-media', Key: objectParams.s3_filename};
+    let url = s3.getSignedUrl('getObject', params);
+    //console.log('The URL is', url);
+    //let updated_object = objectParams.signed_url = url;
+    return url;
+};
 
-
-module.exports = guts;
+module.exports = {
+  upload_media : guts,
+  signed_url: moreGuts
+};
