@@ -131,19 +131,13 @@ let everything = function(app) {
 
 
     function update_caption(request, response) {
-        // grab id of medium that is being updated:
+        // grab id of medium that is being updated and the guts to be updated:
         let id_im_updating = request.params.id;
-        console.log(id_im_updating, "update deets for this thingy");
-        let things_2_update = request.body;
-
-        console.log(things_2_update, "THINGS TO UPDATE");
-
-        // this mess grabs the body of the request.  #fml seriously.
-
+        let stuff_2_update = request.body; // this is an Object containing the things that should be updated
 
         let thing_2_update =
             models.Medium.update(
-                    things_2_update
+                    stuff_2_update
                 , {
                     where: {
                         id: id_im_updating
@@ -154,24 +148,37 @@ let everything = function(app) {
         thing_2_update.then(
             () => {
                 response.statusCode = 200;
-                //console.log(updated_medium, "not sure whats going on here")
                 response.end();
             },
             err => {
                 response.statusCode = 400;
             }
         );
-
-
     }
 
 
-        // need regEx to get the key and the value.  because the thing doesn't come in as a json object.
-
-
-
     function delete_medium(request, response) {
-        console.log("delete image");
+        let thing_2_delete = request.params.id;
+
+        let annihlate =
+            models.Medium.destroy({
+              where: {
+                  id : thing_2_delete
+              }
+            });
+
+
+        annihlate.then(
+            destroyed_medium => {
+                response.statusCode = 204;
+                response.end(console.log("it has been reduced to non-existence. now clear yo cookies"));
+            },
+            error => {
+                response.statusCode = 422;
+                response.end(error);
+            }
+        )
+
     }
 }
 
