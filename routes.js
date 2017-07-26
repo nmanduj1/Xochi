@@ -1,19 +1,21 @@
 'use strict';
 
 const express = require('express');
-let fs = require('fs');
+const fs = require('fs');
 const model = require('./models.js');
 const models = model();
 const Sequelize = require('sequelize');
-
+const bodyParser = require('body-parser');
 const mediaUpload = require('./mediaUploadSpecs.js');
 const multer = require('multer');
 
 
 
 
-
 let everything = function(app) {
+
+    app.use(bodyParser.urlencoded({ extended: false }))
+
 
     // doc from https://github.com/an0nh4x0r/youtube_fileupload/blob/master/routes/profile.js
     let storage = multer.diskStorage({
@@ -36,6 +38,7 @@ let everything = function(app) {
     app.post('/media', add_medium);
     app.put('/media/:id', update_caption);
     app.delete('/media/:id', delete_medium);
+
 
 // detailing my core route CALLBACK FUNCTIONS
 
@@ -131,47 +134,35 @@ let everything = function(app) {
         // grab id of medium that is being updated:
         let id_im_updating = request.params.id;
         console.log(id_im_updating, "update deets for this thingy");
+        let things_2_update = request.body;
+
+        console.log(things_2_update, "THINGS TO UPDATE");
 
         // this mess grabs the body of the request.  #fml seriously.
-        request.on('data', (chunk) => {
-            let decoded_buffer = chunk.toString();
-            console.log(decoded_buffer, "DATA");
-            //let regex_key_search = new RegExp(/(?:(?!=).)*/);
-            let regex_value_search = new RegExp(/=\w+/);
 
-            //let key_to_update = decoded_buffer.match(regex_key_search);
-            let value_to_update = decoded_buffer.match(regex_value_search);
 
-            //let final_key = key_to_update[0];
-            let almost_final_value = value_to_update[0];
-
-            console.log(almost_final_value, "huirhgijknbglwkjrnbgije");
-
-            let splitstr = almost_final_value.split('=');
-            let final_value = splitstr[1];
-
-            let thing_2_update =
-                models.Medium.update({
-                        caption : final_value
-                    }, {
-                        where: {
-                            id: id_im_updating
-                        }
+        let thing_2_update =
+            models.Medium.update(
+                    things_2_update
+                , {
+                    where: {
+                        id: id_im_updating
                     }
-                );
-
-            thing_2_update.then(
-                updated_medium => {
-                    response.send(updated_medium);
-                    console.log(updated_medium, "not sure whats going on here")
-                    response.end();
-                },
-                err => {
-                    response.statusCode = 400;
                 }
             );
 
-        });
+        thing_2_update.then(
+            () => {
+                response.statusCode = 200;
+                //console.log(updated_medium, "not sure whats going on here")
+                response.end();
+            },
+            err => {
+                response.statusCode = 400;
+            }
+        );
+
+
     }
 
 
