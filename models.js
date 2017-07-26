@@ -29,6 +29,7 @@ let seqModel = function() {
  // defining my MODELs using sequelize reference: sequelize.define('name', {attributes}, {options})
 // http://docs.sequelizejs.com/manual/tutorial/models-definition.html
 
+// MEDIUM MODEL
     const Medium = sequelize.define('medium', {
         // primaryKey- ID set automatically by Sequelize
         s3_filename: Sequelize.STRING,
@@ -38,9 +39,24 @@ let seqModel = function() {
 
     Medium.sync(); // asks DB to sync up.  // pass {force: true} as param if giving you problems syncing.
 
+
+//ALBUM MODEL
+    const Album = sequelize.define('album', {
+        // primaryKey -ID set automatically by Sequelize
+        name: Sequelize.STRING,
+        description: Sequelize.STRING
+    });
+
+    Album.sync();
+
+
     return { // return list of all models so add them here.  duh.
-        Medium // creates key value pair of Medium:value
-    }
+        Medium, // creates key value pair of Medium:value
+        Album
+    };
+
+
+
 
 };
 
