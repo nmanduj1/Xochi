@@ -1,17 +1,22 @@
 'use strict'
 
 const express = require('express');
-const routes = require('./routes');
+//const routes = require('./routes');
+const media_routes = require('./routes/media.js');  // slash at the end means its a folder. no slash means its a file
+const album_routes = require('./routes/albums.js');
 const model = require('./models.js');
 
 const app = express();
 
-routes(app);
+//routes(app);
+media_routes(app);
+album_routes(app);
+
 
 let allModels = model();
 let mediumThingy = allModels.Medium;
-
-//console.log(mediumThingy, "ALL MODELS MEDUIMMMMM");
+let albumThingy = allModels.Album;
+//console.log(mediumThingy, "MODELS MEDUIMMMMM");
 
 // Setup CORS permissions
 
@@ -26,6 +31,5 @@ app.use(function(req, res, next) {
 function listening(){
     console.log("share your vanities.");
 }
-
 
 app.listen(8080, listening);
