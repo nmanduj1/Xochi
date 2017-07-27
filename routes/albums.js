@@ -65,9 +65,27 @@ let album_routes = function(app) {
     }
 
     function delete_album(request, response){
-        console.log("delete album");
-    }
 
+        let album_delete_id = request.params.id;
+
+        let destroy =
+            models.Album.destroy({
+                where: {
+                    id : album_delete_id
+                }
+            });
+
+        destroy.then(
+            destroyed_album => {
+                response.statusCode = 204;
+                response.end(console.log("it has been reduced to non-existence"));
+            },
+            error => {
+                response.statusCode = 422;
+                response.end(error);
+            }
+        )
+    }
 
 };
 
