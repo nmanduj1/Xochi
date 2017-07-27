@@ -44,10 +44,10 @@ let album_routes = function(app) {
     }
 
     function add_album(request, response){
-        let new_name = request.body.name;
+        let album_create_name = request.body.name;
         let description = request.body.description;
 
-        models.Album.create({name: new_name, description: description}).then(
+        models.Album.create({name: album_create_name, description: description}).then(
             album_created => {
                 response.send(
                     album_created
@@ -61,11 +61,32 @@ let album_routes = function(app) {
     }
 
     function update_album_details(request, response){
-        console.log("update album")
+        let album_update_id = request.params.id;
+        let details_update = request.body;
+
+        let album_update =
+            models.Album.update(
+                details_update
+                , {
+                    where: {
+                        id: album_update_id
+                    }
+                }
+            );
+
+        album_update.then(
+            () => {
+                response.statusCode = 200;
+                response.end();
+            },
+            err => {
+                response.statusCode = 400;
+                response.end();
+            }
+        );
     }
 
     function delete_album(request, response){
-
         let album_delete_id = request.params.id;
 
         let destroy =
