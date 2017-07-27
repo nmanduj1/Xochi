@@ -13,6 +13,23 @@ const multer = require('multer');
 
 let everything = function(app) {
 
+// setting up my Express Routes for media
+
+    app.get('/media', show_all_media);
+    app.get('/media/random', show_random_medium);
+    app.post('/media', add_medium);
+    app.put('/media/:id', update_medium_caption);
+    app.delete('/media/:id', delete_medium);
+
+
+// setting up my Express Routes for albums
+
+    app.get('/albums', show_all_albums);
+    app.post('/albums', add_album);
+    app.put('/albums/:id', update_album_details);
+    app.delete('/albums/:id', delete_album);
+
+
 // guts to parse requests.  Body parser specifically tackles PUT requests (which #meh.  but, taking into account that
 // incoming PUT requests should only be incoming single part text, so body parser is enough.
 // Multer handles multipart data form submission - aka both files and captions.
@@ -33,19 +50,28 @@ let everything = function(app) {
     let upload = multer({ storage: storage }).single('file');
 
 
+//  Core route CALLBACK FUNCTIONS for Album/Albums
 
-// setting up my Express Routes
+    function show_all_albums(request, response){
+        console.log("show all albums");
+    }
 
-    app.get('/media', show_all);
-    app.get('/media/random', show_random);
-    app.post('/media', add_medium);
-    app.put('/media/:id', update_caption);
-    app.delete('/media/:id', delete_medium);
+    function add_album(request, response){
+        console.log("add album");
+    }
+
+    function update_album_details(request, response){
+        console.log("update album")
+    }
+
+    function delete_album(request, response){
+        console.log("delete album");
+    }
 
 
-// detailing my core route CALLBACK FUNCTIONS
+// Core route CALLBACK FUNCTIONS for Medium/Media
 
-    function show_all(request, response) {
+    function show_all_media(request, response) {
         models.Medium.findAll().then(
             all_media => {
                 response.send(all_media);
@@ -58,7 +84,7 @@ let everything = function(app) {
     }
 
 
-    function show_random(request, response){
+    function show_random_medium(request, response){
         models.Medium.findOne({ order: [[Sequelize.fn('RAND')]] }).then(
             lucky_one => {
                 let only_signed_url = AWS_guts.signed_url(lucky_one); // generates signed url
@@ -136,14 +162,14 @@ let everything = function(app) {
     */
 
 
-    function update_caption(request, response) {
+    function update_medium_caption(request, response) {
         // grab id of medium that is being updated and the guts to be updated:
         let id_im_updating = request.params.id;
         let stuff_2_update = request.body; // this is an Object containing the things that should be updated
 
         let thing_2_update =
             models.Medium.update(
-                    stuff_2_update
+                stuff_2_update
                 , {
                     where: {
                         id: id_im_updating
@@ -169,9 +195,9 @@ let everything = function(app) {
 
         let annihlate =
             models.Medium.destroy({
-              where: {
-                  id : thing_2_delete
-              }
+                where: {
+                    id : thing_2_delete
+                }
             });
 
         annihlate.then(
@@ -188,7 +214,7 @@ let everything = function(app) {
     }
 };
 
-module.exports = everything;
+mmodule.exports = everything;
 
 
 
