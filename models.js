@@ -1,10 +1,12 @@
 'use strict';
-
-
+const config = require('./config.js').db; // pulls only db object from config file
 const Sequelize = require('sequelize');
 
-let seqModel = function() {
-    const sequelize = new Sequelize('xochi_app', 'guzzi', 'rescue', {
+let seqModel = function() { // store as function in order to export the guts out of this file.
+
+// establishing deets for Sequelize to connect to DB.
+
+    const sequelize = new Sequelize(config.db_app_name, config.db_username, config.db_pw, {
         host: '192.168.29.131',
         dialect: 'mysql',
 

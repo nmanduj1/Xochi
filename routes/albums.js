@@ -4,9 +4,7 @@ const express = require('express');
 const fs = require('fs');
 const model = require('../models.js');
 const models = model();
-const Sequelize = require('sequelize');
 const bodyParser = require('body-parser');
-const AWS_guts = require('../mediaUploadSpecs.js');
 
 
 
@@ -20,9 +18,7 @@ let album_routes = function(app) {
     app.delete('/albums/:id', delete_album);
 
 
-// guts to parse requests.  Body parser specifically tackles PUT requests (which #meh.  but, taking into account that
-// incoming PUT requests should only be incoming single part text, so body parser is enough.
-
+// guts to parse requests.
 
     app.use(bodyParser.urlencoded({ extended: false }));
 

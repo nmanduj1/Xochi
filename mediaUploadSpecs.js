@@ -1,7 +1,8 @@
 'use strict';
 
 const AWS = require('aws-sdk');
-const config = require('./config.js');
+const config = require('./config.js').aws; // pulls only aws object from config file
+
 // sending credentials below as parameters per http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html
 const s3 = new AWS.S3({accessKeyId: config.aws_access_key_id, secretAccessKey: config.aws_secret_access_key});
 
