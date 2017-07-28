@@ -70,10 +70,28 @@ let album_media_routes = function(app) {
         //console.log('creating one');
     }
 
-    function remove_medium_from_album(request, reponse){
+    function remove_medium_from_album(request, response){
         let album_id = request.params.album_id;
+        let medium_id = request.params.medium_id;
 
-        console.log('removing one');
+        let find_album = models.Album.findOne({
+            where: {
+                id: album_id
+            }
+        });
+
+        find_album.then(found_album => {
+            found_album.getMedia({
+                where: {
+                    id:medium_id
+                }
+            }).then(thing => {
+                found_album.removeMedia(thing).then(() => {
+                    response.statusCode = 200;
+                    response.end();
+                })
+            })
+        });
     }
 
 };
