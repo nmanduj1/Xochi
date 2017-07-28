@@ -51,15 +51,19 @@ let seqModel = function() { // store as function in order to export the guts out
 
     Album.sync();
 
+// RELATIONSHIP DEFINITIONS:
+    Medium.belongsToMany(Album, {through: 'AlbumMedia'});  // creates association between medium and album models via AlbumMedia table in DB
+    Album.belongsToMany(Medium, {through: 'AlbumMedia'}); // creates association between album and medium models via AlbumMedia table in DB
 
+    sequelize.sync(); // creates and syncs AlbumMedia tables.  Or however many relationship tables you happen to have.
+
+
+
+// Exiting file
     return { // return list of all models so add them here.  duh.
         Medium, // creates key value pair of Medium:value
         Album
     };
-
-
-
-
 };
 
 
