@@ -12,7 +12,7 @@ let album_media_routes = function(app) {
 //  setting up my Express Routes for AlbumMedia 'transfer file'
     app.get('/album/:album_id/media', retrieve_all_media);
     app.get('/album/:album_id/media/:medium_id', retrieve_one_medium);
-    app.post('/album/:album_id/media/:medium_id', create_medium_in_album);
+    app.post('/album/:album_id/media', create_medium_in_album);
     app.delete('/album/:album_id/media/:medium_id', remove_medium_from_album)
 
 
@@ -63,12 +63,40 @@ let album_media_routes = function(app) {
         });
     }
 
-    function create_medium_in_album(request, reponse){
-        //let album_id = request.params.album_id;
-        //let medium_id = request.params.medium_id;
-        console.log(album_id, "album id", medium_id, "medium id");
+    function create_medium_in_album(request, response){
+        let album_id = request.params.album_id;
+
+        /*
+        //Album.create();
+        //Media.create();
+
+        let find_album = models.Album.findOne({
+            where: {
+                id: album_id
+            }
+        });
+        console.log('found album');
+
+
+        find_album.then(found_album => {
+            console.log("trying to add to album");
+            found_album.addMedium({
+                where: {
+                    id: medium_id
+                }
+            }).then(thing => {
+                console.log(thing, "thing");
+            });
+        });
+        */
         //console.log('creating one');
+
+
     }
+
+
+
+
 
     function remove_medium_from_album(request, response){
         let album_id = request.params.album_id;
