@@ -6,8 +6,9 @@ const model = require('../models.js');
 const models = model();
 const Sequelize = require('sequelize');
 const bodyParser = require('body-parser');
-const AWS_guts = require('../mediaUploadSpecs.js');
-const multer = require('multer');
+// No longer need following logic, because it was moved to AlbumMedia relationship file- that will now handle file uploads..
+//const AWS_guts = require('../mediaUploadSpecs.js');
+//const multer = require('multer');
 
 
 
@@ -17,7 +18,7 @@ let media_routes = function(app) {
 
     app.get('/media', show_all_media);
     app.get('/media/random', show_random_medium);
-    app.post('/media', add_medium);
+    //app.post('/media', add_medium);
     app.put('/media/:id', update_medium_caption);
     app.delete('/media/:id', delete_medium);
 
@@ -29,6 +30,10 @@ let media_routes = function(app) {
 
     app.use(bodyParser.urlencoded({ extended: false }));
 
+
+
+// No longer need following logic, because it was moved to AlbumMedia relationship file- that will now handle file uploads..
+/*
     // doc from https://github.com/an0nh4x0r/youtube_fileupload/blob/master/routes/profile.js
     let storage = multer.diskStorage({
         destination: function (req, file, cb) {
@@ -40,7 +45,7 @@ let media_routes = function(app) {
     });
 
     let upload = multer({ storage: storage }).single('file');
-
+*/
 
 // Core route CALLBACK FUNCTIONS for Medium/Media
 
@@ -74,6 +79,9 @@ let media_routes = function(app) {
         );
     }
 
+
+// removed following logic to relationship AlbumMedia route file.  That way, every image that is uploaded is uploaded to an album.
+/*
     function add_medium(request, response, next) {
         upload(request, response, function(err){
             if (err) {
@@ -97,7 +105,7 @@ let media_routes = function(app) {
             let mimetype = (request.file.mimetype); // pulling out mimetype stuffs
             let medium_caption = request.body.caption;
             upload_promise.then(
-                function (internal_random_file_name/* this corresponds to the randKey that is being returned by the promise in my mediaUploadSpecs.js file */) {
+                function (internal_random_file_name/* this corresponds to the randKey that is being returned by the promise in my mediaUploadSpecs.js file) {
                     models.Medium.create({s3_filename: internal_random_file_name, mimetype: mimetype, caption: medium_caption}).then(
                         made_it => {
                             response.send(
@@ -125,7 +133,7 @@ let media_routes = function(app) {
             //});
         });
     }
-
+*/
     /*
     function send2AWS(err, fileDescriptor) {
         // file descriptor is pointer to file

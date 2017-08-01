@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const multer = require('multer');
 const AWS_guts = require('../mediaUploadSpecs.js');
-
+const Sequelize = require('sequelize');
 
 
 let album_media_routes = function(app) {
@@ -33,6 +33,7 @@ let album_media_routes = function(app) {
 
 //  setting up my Express Routes for AlbumMedia 'transfer file'
     app.get('/album/:album_id/media', retrieve_all_media);
+    app.get('/album/:album_id/media/random', retrieve_random);
     app.get('/album/:album_id/media/:medium_id', retrieve_one_medium);
     app.post('/album/:album_id/media', create_medium_in_album);
     app.delete('/album/:album_id/media/:medium_id', remove_medium_from_album)
@@ -85,6 +86,34 @@ let album_media_routes = function(app) {
         });
     }
 
+    function retrieve_random(request, response){
+        let album_id= request.params.album_id;
+
+        let find_album = models.Album.findOne({
+            where: {
+                id: album_id
+            }
+        });
+
+        find_album.then(found_album => {
+            found_album.getMedia( { order: [[Sequelize.fn('RAND')]] } ).then(
+                lucky_one => {
+                    console.log(lucky_one[0], "HERE");
+                    let only_signed_url = AWS_guts.signed_url(lucky_one[0]); // generates signed url
+                    let plain_object_model = lucky_one[0].get({plain: true}); // removes sequelizer crap to give you actual values in object
+                    plain_object_model.signed_url = only_signed_url; // setting up key/value pair to store in main object: key = ('plain_object_model') value = stuff returned by only_signed_url
+                    response.send(plain_object_model); // sends back new object with updated key-value pairs.
+                    response.end();
+                },
+                err => {
+                    response.statusCode = 400;
+                    response.end();
+                }
+            )
+        });
+    }
+
+
     function create_medium_in_album(request, response){
         let album_id = request.params.album_id;
 
@@ -117,50 +146,25 @@ let album_media_routes = function(app) {
             let medium_caption = request.body.caption;
 
 
-        upload_promise.then(
-            function (internal_random_file_name/* this corresponds to the randKey that is being returned by the promise in my mediaUploadSpecs.js file */) {
-                models.Medium.create({s3_filename: internal_random_file_name, mimetype: mimetype, caption: medium_caption}).then(
-                    made_it => {
-                        find_album.then(found_album => {
-                            found_album.addMedium(made_it).then(thing => {
-                                response.send(made_it);
-                                response.statusCode = 200;
-                                response.end();
+            upload_promise.then(
+                function (internal_random_file_name/* this corresponds to the randKey that is being returned by the promise in my mediaUploadSpecs.js file */) {
+                    models.Medium.create({s3_filename: internal_random_file_name, mimetype: mimetype, caption: medium_caption}).then(
+                        made_it => {
+                            find_album.then(found_album => {
+                                found_album.addMedium(made_it).then(thing => {
+                                    response.send(made_it);
+                                    response.statusCode = 200;
+                                    response.end();
+                                });
                             });
-                        });
-                    }
-                ); // downside, always creating. mod this with promise to check for duplicate
-            },
-            function (error) {
-                console.log(error);
-            }
-        );
-    });
-        /*
-        //Album.create();
-        //Media.create();
-
-        let find_album = models.Album.findOne({
-            where: {
-                id: album_id
-            }
-        });
-        console.log('found album');
-
-
-        find_album.then(found_album => {
-            console.log("trying to add to album");
-            found_album.addMedium({
-                where: {
-                    id: medium_id
+                        }
+                    ); // downside, always creating. mod this with promise to check for duplicate
+                },
+                function (error) {
+                    console.log(error);
                 }
-            }).then(thing => {
-                console.log(thing, "thing");
-            });
+            );
         });
-        */
-        //console.log('creating one');
-
 
     }
 
