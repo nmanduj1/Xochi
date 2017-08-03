@@ -39,7 +39,6 @@ let seqModel = function() { // store as function in order to export the guts out
         caption: Sequelize.TEXT
     });
 
-    Medium.sync(); // asks DB to sync up.  // pass {force: true} as param if giving you problems syncing.
 
 
 //ALBUM MODEL
@@ -49,11 +48,37 @@ let seqModel = function() { // store as function in order to export the guts out
         description: Sequelize.STRING
     });
 
-    Album.sync();
+
+
+//USER MODEL
+    const User = sequelize.define('user', {
+       first_name: Sequelize.STRING,
+       last_name: Sequelize.STRING,
+       user_name: Sequelize.STRING,
+       password: Sequelize.STRING,
+       email: Sequelize.STRING
+    });
+
+
+
 
 // RELATIONSHIP DEFINITIONS:
+    // Many to Many Relationship (Many albums to many medium)
     Medium.belongsToMany(Album, {through: 'AlbumMedia'});  // creates association between medium and album models via AlbumMedia table in DB
     Album.belongsToMany(Medium, {through: 'AlbumMedia'}); // creates association between album and medium models via AlbumMedia table in DB
+
+    // One to Many Relationship (One user to many album)
+    User.hasMany(Album);
+    Album.belongsTo(User);
+
+    // One to Many Relationship (One user to many medium)
+    User.hasMany(Medium);
+    Medium.belongsTo(User);
+
+
+    Medium.sync(); // asks DB to sync up.  // pass {force: true} as param if giving you problems syncing.
+    User.sync();
+    Album.sync();
 
     sequelize.sync(); // creates and syncs AlbumMedia tables.  Or however many relationship tables you happen to have.
 
@@ -62,7 +87,8 @@ let seqModel = function() { // store as function in order to export the guts out
 // Exiting file
     return { // return list of all models so add them here.  duh.
         Medium, // creates key value pair of Medium:value
-        Album
+        Album,
+        User
     };
 };
 

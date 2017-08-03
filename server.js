@@ -4,6 +4,7 @@ const express = require('express');
 //const routes = require('./routes');
 const media_routes = require('./routes/media.js');  // slash at the end means its a folder. no slash means its a file
 const album_routes = require('./routes/albums.js');
+const user_routes = require('./routes/users.js');
 const album_media_routes = require('./routes/album_media.js');
 const model = require('./models.js');
 
@@ -25,7 +26,7 @@ app.use(function(req, res, next) {
 media_routes(app);
 album_routes(app);
 album_media_routes(app);
-
+user_routes(app);
 // running and testing my models/schemas
 
 let allModels = model();
