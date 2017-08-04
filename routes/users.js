@@ -66,7 +66,30 @@ let user_routes = function(app) {
     }
 
     function update_user_info(request, response) {
-        console.log("hello");
+        let userId_to_update = request.params.user_id;
+        let details_update = request.body;
+        console.log(details_update, "STUFF TO UPDATE");
+
+        let user_update =
+            models.User.update(
+                details_update
+                , {
+                    where: {
+                        id: userId_to_update
+                    }
+                }
+            );
+
+        user_update.then(
+            () => {
+                response.statusCode = 200;
+                response.end();
+            },
+            err => {
+                response.statusCode = 400;
+                response.end();
+            }
+        );
     }
 
     function delete_user(request, response) {
