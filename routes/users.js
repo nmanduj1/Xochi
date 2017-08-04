@@ -29,7 +29,6 @@ let user_routes = function(app) {
         let user_name = request.body.user_name;
         let email = request.body.email;
         let password = request.body.password;
-        //console.log(first_name, "hello");
 
         models.User.create({
             first_name: first_name,
@@ -52,7 +51,18 @@ let user_routes = function(app) {
     }
 
     function display_user_specs(request, response) {
-        console.log("hello");
+        let user_details_view = request.params.user_id;
+
+        models.User.findOne({
+            where: {
+                id: user_details_view
+            }
+        }).then(user_specs => {
+            response.send(user_specs);
+            response.statusCode = 200;
+            response.end();
+        });
+
     }
 
     function update_user_info(request, response) {
