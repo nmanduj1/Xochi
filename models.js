@@ -56,7 +56,9 @@ let seqModel = function() { // store as function in order to export the guts out
        last_name: Sequelize.STRING,
        user_name: Sequelize.STRING,
        password: Sequelize.STRING,
-       email: Sequelize.STRING
+       email: Sequelize.STRING,
+       token: Sequelize.TEXT,
+       signed_key: Sequelize.TEXT
     });
 
 
