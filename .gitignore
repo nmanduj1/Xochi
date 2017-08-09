@@ -4,3 +4,4 @@ config.js
 /uploads/
 notes.txt
 notes2.txt
+email_verification.js
