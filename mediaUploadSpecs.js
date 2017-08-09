@@ -70,7 +70,37 @@ let moreGuts = function(objectParams) {
     return url;
 };
 
+
+function sending_stuff(to_who, unique_email_token) {
+
+    AWS.config.update({region: 'us-east-1'});
+
+    let SES = new AWS.SES();
+    let params = {
+        Destination: {
+            ToAddresses: to_who
+        },
+        Source: 'nancy@aceldev.com',
+        Message: {
+            Body: {
+                Text: {
+                    Data: 'Hello world'  + unique_email_token
+                }
+            },
+            Subject: {
+                Data: 'Hello world'
+            }
+        }
+    };
+    SES.sendEmail(params, , function (err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else console.log(data);           // successful response
+    });
+}
+
+
 module.exports = {
   upload_media : guts,
-  signed_url: moreGuts
+  signed_url: moreGuts,
+  send_email: sending_stuff
 };
