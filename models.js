@@ -58,7 +58,9 @@ let seqModel = function() { // store as function in order to export the guts out
        password: Sequelize.STRING,
        email: Sequelize.STRING,
        token: Sequelize.TEXT,
-       signed_key: Sequelize.TEXT
+       signed_key: Sequelize.TEXT,
+       email_verification_token: Sequelize.STRING,
+       email_verification_status: Sequelize.BOOLEAN
     });
 
 

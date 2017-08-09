@@ -11,6 +11,8 @@ const nJwt = require('njwt');
 const secureRandom = require('secure-random');
 const validator = require('validator');
 const _ = require("underscore");
+const email_token = require('../email_verification_token.js');
+const email_send = require('../mediaUploadSpecs.js');
 
 let user_routes = function(app) {
 
@@ -19,7 +21,7 @@ let user_routes = function(app) {
     app.post('/user/new', create_user_account);
     app.post('/user/go', signing_in);
     app.get('/user/:user_id', display_user_specs);
-
+    app.get('/confirm/:email_token', email_verification);
     app.put('/user/:user_id', update_user_info);
     app.delete('/user/:user_id', delete_user);
 
@@ -28,6 +30,12 @@ let user_routes = function(app) {
 
 // Core route CALLBACK FUNCTIONS for Users
 
+
+    function email_verification(request, response){
+        let unique_token = request.params.email_token;
+        console.log(unique_token, "UNIQUE TOKEN EMAIL");
+    }
+
     function create_user_account(request, response) {
         let first_name = request.body.first_name;
         let last_name = request.body.last_name;
@@ -35,15 +43,22 @@ let user_routes = function(app) {
         let email = request.body.email;
         let password = request.body.password;
 
+
         if (validator.isEmail(email)) {
+            let new_email_token = email_token();
+
             models.User.create({
                 first_name: first_name,
                 last_name: last_name,
                 user_name: user_name,
                 email: email,
-                password: password
+                password: password,
+                email_verification_token: new_email_token,
+                email_verification_status: false
+
             }).then(
                 user_created => {
+                    email_send.send_email(email, new_email_token);
                     response.send(
                         user_created
                     )

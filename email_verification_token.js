@@ -14,9 +14,9 @@ function generate_email_token() {
     let mystr = mykey.update('abc', 'utf8', 'hex');
     mystr += mykey.final('hex');
 
-    console.log(mystr);
+    return mystr;
 
-    
+
 // create expiration date
 
     /*

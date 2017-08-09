@@ -5,7 +5,7 @@ const config = require('./config.js').aws; // pulls only aws object from config 
 
 // sending credentials below as parameters per http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html
 const s3 = new AWS.S3({accessKeyId: config.aws_access_key_id, secretAccessKey: config.aws_secret_access_key});
-
+const SES = new AWS.SES({accessKeyId: config.aws_access_key_id, secretAccessKey: config.aws_secret_access_key, region: 'us-east-1'});
 // I'm uploading images using putObject from AWS documentation found here : https://aws.amazon.com/sdk-for-node-js/
 //
 // I think you can also use the code below that (  .upload()  )- based on aws doc found here :
@@ -73,18 +73,17 @@ let moreGuts = function(objectParams) {
 
 function sending_stuff(to_who, unique_email_token) {
 
-    AWS.config.update({region: 'us-east-1'});
+    //AWS.config.update({region: 'us-east-1'});
 
-    let SES = new AWS.SES();
     let params = {
         Destination: {
-            ToAddresses: to_who
+            ToAddresses: [to_who]
         },
         Source: 'nancy@aceldev.com',
         Message: {
             Body: {
                 Text: {
-                    Data: 'Hello world'  + unique_email_token
+                    Data: 'Hello world http://localhost:8080/confirm/'  + unique_email_token
                 }
             },
             Subject: {
@@ -92,7 +91,8 @@ function sending_stuff(to_who, unique_email_token) {
             }
         }
     };
-    SES.sendEmail(params, , function (err, data) {
+
+    SES.sendEmail(params, function (err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else console.log(data);           // successful response
     });
