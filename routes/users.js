@@ -30,9 +30,27 @@ let user_routes = function(app) {
 
 // Core route CALLBACK FUNCTIONS for Users
 
-
     function email_verification(request, response){
         let unique_token = request.params.email_token;
+
+        models.User.findOne({
+            where: {
+                email_verification_token: unique_token
+            }
+        }).then(
+                user => {
+                    user.email_verification_status = true;
+                    user.save().then(() => {
+                        response.send(user);
+                        response.end();
+                },
+                err => {
+                    response.send(err);
+                    response.statusCode = 400;
+                }
+            );
+        });
+
         console.log(unique_token, "UNIQUE TOKEN EMAIL");
     }
 
@@ -55,7 +73,6 @@ let user_routes = function(app) {
                 password: password,
                 email_verification_token: new_email_token,
                 email_verification_status: false
-
             }).then(
                 user_created => {
                     email_send.send_email(email, new_email_token);
@@ -96,8 +113,6 @@ let user_routes = function(app) {
                 response.send(user);
                 response.end();
             });
-
-            console.log(user);
         })
     }
 
@@ -113,7 +128,6 @@ let user_routes = function(app) {
             response.statusCode = 200;
             response.end();
         });
-
     }
 
     function update_user_info(request, response) {
@@ -199,16 +213,6 @@ let user_routes = function(app) {
             });
 
         });
-
-
-
-
-
-
-
-
-
-
     }
 
     function delete_user(request, response) {
@@ -227,13 +231,11 @@ let user_routes = function(app) {
                 response.statusCode = 204;
                 response.end(console.log("it has been reduced to non-existence"));
             },
-            error => {
+            err => {
                 response.statusCode = 422;
-                response.end(error);
+                response.end(err);
             }
         );
-
-        console.log("hello");
     }
 
 
