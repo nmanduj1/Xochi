@@ -52,15 +52,28 @@ let seqModel = function() { // store as function in order to export the guts out
 
 //USER MODEL
     const User = sequelize.define('user', {
-       first_name: Sequelize.STRING,
-       last_name: Sequelize.STRING,
-       user_name: Sequelize.STRING,
-       password: Sequelize.STRING,
-       email: Sequelize.STRING,
-       token: Sequelize.TEXT,
-       signed_key: Sequelize.TEXT,
-       email_verification_token: Sequelize.STRING,
-       email_verification_status: Sequelize.BOOLEAN
+        first_name: Sequelize.STRING,
+        last_name: Sequelize.STRING,
+        user_name: Sequelize.STRING,
+        password: Sequelize.STRING,
+        email: Sequelize.STRING,
+        token: Sequelize.TEXT,
+        signed_key: Sequelize.TEXT,
+        email_verification_token: Sequelize.STRING,
+        email_verification_status: Sequelize.BOOLEAN
+    }, {
+        indexes: [
+            // Create a unique index on email, user_name
+            {
+                unique: true,
+                fields: ['email']
+
+            },
+            {
+                unique: true,
+                fields: ['user_name']
+            }
+        ]
     });
 
 
